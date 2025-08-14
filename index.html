@@ -1,21 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle System UI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="controls-panel">
+            <h1>Particle System</h1>
+            
+            <!-- Examples Section - Collapsible -->
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleSection(this)">
+                    <h2>Examples</h2>
+                    <span class="collapsible-arrow">▶</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Click to try a pre-made example:</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                            <button onclick="loadExample('fraud')" class="btn-success">Fraud</button>
+                            <button onclick="loadExample('fraud_physics')" class="btn-success">Fraud Physics</button>
+                            <button onclick="loadExample('fraud_shrink')" class="btn-success">Fraud Shrink</button>
+                            <button onclick="loadExample('fraud_meat')" class="btn-success">Fraud Meat</button>
+                            <button onclick="loadExample('pond')" class="btn-success">Pond</button>
+                            <button onclick="loadExample('overcrowd')" class="btn-success">Overcrowd</button>
+                            <button onclick="loadExample('eex')" class="btn-success">Eex</button>
+                            <button onclick="loadExample('eeex')" class="btn-success">Eeex</button>
+                            <button onclick="loadExample('ef')" class="btn-success">Ef</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>Add New Particle Set</h2>
+                <form id="particle-form">
+                    <div class="form-group">
+                        <label>Number of Particles</label>
+                        <input type="number" id="numParticles" value="1000" min="1" max="10000">
+                    </div>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Lifetime</label>
+                            <input type="number" id="lifetime" value="100" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Size</label>
+                            <input type="number" id="size" value="3" min="0.1" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" id="color" value="#ffffff" class="color-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Alpha (0-255)</label>
+                        <input type="number" id="alpha" min="0" max="255" value="255">
+                    </div>
+                    
+                    <!-- Physics Options - Collapsible -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header" onclick="toggleSection(this)">
+                            <h3>Physics Options</h3>
+                            <span class="collapsible-arrow">▶</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-inner">
+                                <div class="form-group">
+                                    <label>Movement Method</label>
+                                    <select id="globalMoveMethod">
+                                        <option value="direct">Direct</option>
+                                        <option value="physics">Physics</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>Scale</label>
+                                        <input type="number" id="scl" value="5" min="1" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Magnitude</label>
+                                        <input type="number" id="magnitude" value="1" min="0" step="0.1">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>Angle Multiplier</label>
+                                        <input type="number" id="angleMult" value="1" min="0" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Speed Limit</label>
+                                        <input type="number" id="globalSpeedLimit" value="1" min="0" step="0.1">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Noise Scale</label>
+                                    <input type="number" id="noiseScale" value="0.01" min="0.001" step="0.001">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Spawn Spillover</label>
+                                    <input type="number" id="spawnSpillover" value="0" min="0">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Edge Wrap</label>
+                                    <select id="edgeWrap">
+                                        <option value="false">No</option>
+                                        <option value="true">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Shape Options - Collapsible -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header" onclick="toggleSection(this)">
+                            <h3>Shape Options</h3>
+                            <span class="collapsible-arrow">▶</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-inner">
+                                <div class="form-group">
+                                    <label>Draw Shape</label>
+                                    <select id="drawShape">
+                                        <option value="line">Line</option>
+                                        <option value="arc">Arc</option>
+                                        <option value="circle">Circle</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Shape Size</label>
+                                    <select id="shapeSize">
+                                        <option value="relative">Relative</option>
+                                        <option value="direct">Direct</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Shape Fill Color</label>
+                                    <input type="color" id="shapeFill" value="#ffffff" class="color-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Animation Options - Collapsible -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header" onclick="toggleSection(this)">
+                            <h3>Animation Options</h3>
+                            <span class="collapsible-arrow">▶</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-inner">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>Shrink</label>
+                                        <select id="shrink">
+                                            <option value="false">No</option>
+                                            <option value="true">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Shrink Rate</label>
+                                        <input type="number" id="shrinkRate" value="0.3" min="0" step="0.1">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>Fade</label>
+                                        <select id="fade">
+                                            <option value="false">No</option>
+                                            <option value="true">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fade Rate</label>
+                                        <input type="number" id="fadeRate" value="1" min="0" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button type="button" onclick="randomizeParameters()" style="flex: 1;">🎲 Randomize Parameters</button>
+                        <button type="submit" class="btn-success" style="flex: 1;" ${isRunning ? 'disabled' : ''}>Add Particle Set</button>
+                    </div>
+                </form>
+            </div>
+            
+            
+        </div>
+        
+        <div class="canvas-container">
+            <h2>Particle Simulation</h2>
+            <div id="fps-counter" hidden="true">FPS: 0</div>
+            <div id="p5-canvas"></div>
+        </div>
 
-    <title>Sketch</title>
+        <div class="play-panel">
+          <div class="canvas-controls">
+                <button onclick="startAnimation()">Start</button>
+                <button onclick="saveCanvas('particleArt.png')">Save</button>
+                <!-- <button onclick="stopAnimation()">Stop</button> -->
+                <!-- <button onclick="restartSequence()">Restart Sequence</button> -->
+                <!-- <button onclick="clearCanvas()">Clear</button> -->
+                <!-- <button onclick="savePreset()">Save Preset</button> -->
+          </div>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
+          <div class="section">
+                <h2>Active Particle Sets</h2>
+                <div id="particle-sets-list"></div>
+            </div>
+        </div>
+    </div>
 
-    <script src="libraries/p5.min.js"></script>
-    <script src="libraries/p5.sound.min.js"></script>
-  </head>
 
-  <body>
-    <script src="ParticleSequence.js"></script>
-    <script src="ParticleSet.js"></script>
     <script src="Particle.js"></script>
-    <script src="sketch.js"></script>
-  </body>
+    <script src="ParticleSet.js"></script>
+    <script src="ParticleSequence.js"></script>
+    <script src="script.js"></script>
+</body>
 </html>

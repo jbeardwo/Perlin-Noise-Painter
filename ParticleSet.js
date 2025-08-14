@@ -6,6 +6,7 @@ class ParticleSet{
         this.lifetime = lifetime;
         this.color = color;
         this.alpha = alpha;
+        this.originalLifetime = lifetime;
 
         // Physics and behavior properties (with defaults)
         this.scl = options.scl || 5;
@@ -55,9 +56,7 @@ class ParticleSet{
         }
         
         this.lifetime--;
-        if(this.lifetime === 0){
-            this.particles = [];
-        }
+        
     }
     
     show(){

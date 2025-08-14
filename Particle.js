@@ -91,9 +91,10 @@ class Particle{
         // Physics simulation with acc / vel
         let x = floor(this.pos.x / this.parent.scl);
         let y = floor(this.pos.y / this.parent.scl);
-        let index = x + y * cols;
-        let force = vectors[index];
-        this.applyForce(force);
+        let angle = noise(x * noiseScale, y * noiseScale) * angleMult * TWO_PI;
+        let v = p5.Vector.fromAngle(angle);
+        v.setMag(magnitude);
+        this.applyForce(v);
     }
 
     followDirect(vectors){  
