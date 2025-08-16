@@ -1,0 +1,164 @@
+{
+  "particleSets": [
+    {
+      "numParticles": 2000,
+      "lifetime": 50,
+      "size": 24,
+      "color": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      },
+      "alpha": 2,
+      "options": {
+        "scl": 5,
+        "magnitude": 4,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "line",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 255,
+          "y": 255,
+          "z": 255
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 2000,
+      "lifetime": 50,
+      "size": 12,
+      "color": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      },
+      "alpha": 5,
+      "options": {
+        "scl": 5,
+        "magnitude": 4,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "line",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 255,
+          "y": 255,
+          "z": 255
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 3000,
+      "lifetime": 50,
+      "size": 6,
+      "color": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      },
+      "alpha": 10,
+      "options": {
+        "scl": 5,
+        "magnitude": 4,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "line",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 255,
+          "y": 255,
+          "z": 255
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 10000,
+      "lifetime": 50,
+      "size": 3,
+      "color": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      },
+      "alpha": 20,
+      "options": {
+        "scl": 5,
+        "magnitude": 4,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "line",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 255,
+          "y": 255,
+          "z": 255
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 15000,
+      "lifetime": 75,
+      "size": 1,
+      "color": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      },
+      "alpha": 30,
+      "options": {
+        "scl": 5,
+        "magnitude": 4,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "line",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 255,
+          "y": 255,
+          "z": 255
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    }
+  ]
+}

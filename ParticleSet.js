@@ -29,6 +29,8 @@ class ParticleSet{
 
         this.particles = [];
         this.generateParticles();
+        //helps identify sets for UI
+        this.id = Math.random();
         
     }
 
@@ -65,9 +67,9 @@ class ParticleSet{
         }
     }
 
-    follow(flowfield){
+    follow( ){
         for(let p of this.particles){
-            p.follow(flowfield);
+            p.follow( );
         }
     }
 

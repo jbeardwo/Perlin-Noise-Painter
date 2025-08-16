@@ -2,19 +2,14 @@
 let canvas;
 let particleSets = [];
 let particleSequence = null;
-let flowfield = [];
 let cols, rows;
-let scl = 5;
 let noiseScale = 0.01;
-let angleMult = 1;
 let magnitude = 1;
 let isRunning = false;
 let fpsCounter;
 
-function toggleSection(header) {
-    const section = header.parentNode;
-    section.classList.toggle('open');
-}
+
+
 
 // p5.js sketch
 function setup() {
@@ -23,13 +18,10 @@ function setup() {
     pixelDensity(1);
     background(0);
     
-    cols = floor(width / scl);
-    rows = floor(height / scl);
-    
-    
-    
     fpsCounter = select('#fps-counter');
 }
+
+
 
 function draw() {
     if (isRunning && particleSequence) {
@@ -41,10 +33,7 @@ function draw() {
             isRunning = false;
             
             // Re-enable the add button
-            const addButton = document.querySelector('button[type="submit"].btn-success');
-            if (addButton) {
-                addButton.disabled = false;
-            }
+            enableButtons();
         }
     }
 
@@ -102,67 +91,101 @@ function addParticleSet() {
     );
     
     particleSets.push(particleSet);
-    
-    // Create new sequence with all sets
-    particleSequence = new ParticleSequence([...particleSets]);
-    
     updateParticleSetsList();
 }
 
 function removeParticleSet(id) {
     particleSets = particleSets.filter(set => set.id !== id);
-    
-    // Recreate sequence with remaining sets
-    if (particleSets.length > 0) {
-        particleSequence = new ParticleSequence([...particleSets]);
-    } else {
-        particleSequence = null;
-    }
-    
     updateParticleSetsList();
 }
 
 function updateParticleSetsList() {
     const list = document.getElementById('particle-sets-list');
-    list.innerHTML = '';
     
+    // Get existing items
+    const existingItems = list.querySelectorAll('.particle-set-item');
+    const existingSequenceInfo = list.querySelector('.sequence-info');
+    
+    // Update existing particle set items or create new ones
     particleSets.forEach((set, index) => {
-        const item = document.createElement('div');
-        item.className = 'particle-set-item';
+        let item = existingItems[index];
         
-        // Check if this is the currently active set
+        // Create new item if it doesn't exist
+        if (!item) {
+            item = document.createElement('div');
+            item.className = 'particle-set-item';
+            
+            // Create the structure once
+            item.innerHTML = `
+                <div class="particle-set-header">
+                    <strong class="set-title">Set ${index + 1}<span class="status-text"></span></strong>
+                    <div class="particle-set-controls">
+                        <button type="remove" class="small-btn btn-danger" onclick="removeParticleSet(${set.id})">Remove</button>
+                    </div>
+                </div>
+                <div class="set-details">
+                    Particles: ${set.numParticles} | 
+                    Lifetime: <span class="lifetime-text"></span> | 
+                    Shape: <span class="shape-info">${set.drawShape}</span>
+                </div>
+            `;
+            
+            // Add hover events for tooltip (only once when creating)
+            item.addEventListener('mouseenter', (e) => showTooltip(e, set));
+            item.addEventListener('mouseleave', hideTooltip);
+            item.addEventListener('mousemove', moveTooltip);
+            
+            list.insertBefore(item, existingSequenceInfo);
+        }
+        
+        // Update only the changing parts
         const isActive = particleSequence && particleSequence.curr === index;
         const statusText = (isActive && isRunning) ? ' (ACTIVE)' : index < (particleSequence ? particleSequence.curr : 0) ? ' (COMPLETED)' : ' (WAITING)';
         const statusColor = isActive ? '#4ade80' : index < (particleSequence ? particleSequence.curr : 0) ? '#6b7280' : '#fbbf24';
         
-        item.innerHTML = `
-            <div class="particle-set-header">
-                <strong>Set ${index + 1}<span style="color: ${statusColor};">${statusText}</span></strong>
-                <div class="particle-set-controls">
-                    <button class="small-btn btn-danger" onclick="removeParticleSet(${set.id})">Remove</button>
-                </div>
-            </div>
-            <div>
-                Particles: ${set.numParticles} | 
-                Lifetime: ${Math.max(set.lifetime,0)}/${set.originalLifetime} | 
-                Shape: ${set.drawShape}
-            </div>
-        `;
-        list.appendChild(item);
+        // Update just the status text and color
+        const statusElement = item.querySelector('.status-text');
+        statusElement.textContent = statusText;
+        statusElement.style.color = statusColor;
+        
+        // Update just the lifetime text
+        const lifetimeElement = item.querySelector('.lifetime-text');
+        lifetimeElement.textContent = `${Math.max(set.lifetime,0)}/${set.originalLifetime}`;
+        
+        // Update the shape info with labeled color squares
+        const shapeInfoElement = item.querySelector('.shape-info');
+        shapeInfoElement.innerHTML = `${set.drawShape} | ${formatColorSquare(set.color, 'Color')} | ${formatColorSquare(set.shapeFill, 'Fill')}`;
+        
+        // Update the tooltip event to reference the current set data
+        item.onmouseenter = (e) => showTooltip(e, set);
     });
     
-    // Add sequence info
+    // Remove extra items if we have fewer particle sets than before
+    for (let i = particleSets.length; i < existingItems.length; i++) {
+        existingItems[i].remove();
+    }
+    
+    // Update or create sequence info
+    let sequenceInfo = existingSequenceInfo;
     if (particleSequence) {
-        const sequenceInfo = document.createElement('div');
-        sequenceInfo.style.cssText = 'margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; font-size: 14px;';
+        if (!sequenceInfo) {
+            sequenceInfo = document.createElement('div');
+            sequenceInfo.className = 'sequence-info';
+            sequenceInfo.style.cssText = 'margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; font-size: 14px;';
+            list.appendChild(sequenceInfo);
+        }
+        
         sequenceInfo.innerHTML = `
             <strong>Sequence Progress:</strong><br>
             Current Set: ${Math.min(particleSequence.curr + 1, particleSets.length)} of ${particleSets.length}<br>
             Status: ${particleSequence.curr >= particleSets.length ? 'Completed' : 'Running'}
         `;
-        list.appendChild(sequenceInfo);
+    } else if (sequenceInfo) {
+        sequenceInfo.remove();
     }
 }
+
+
 
 function stopAnimation() {
     isRunning = false;
@@ -172,17 +195,44 @@ function clearCanvas() {
     background(0);
     particleSets = [];
     particleSequence = null;
+    enableButtons();
+    isRunning = false;
     updateParticleSetsList();
 }
 
-function startAnimation() {
-    isRunning = true;
-    
+function disableButtons(){
     // Disable the add button
-    const addButton = document.querySelector('button[type="submit"].btn-success');
-    if (addButton) {
-        addButton.disabled = true;
+    const addButton = document.querySelectorAll('.btn-success');
+            for (let button of addButton) {
+                button.disabled = true;
+                button.classList.add('btn-disabled');
+            }
+    const removeButtons = document.querySelectorAll('button[type="remove"].btn-danger')
+    for(let button of removeButtons){
+        button.disabled = true;
+        button.classList.add('btn-disabled')
     }
+}
+
+function enableButtons(){
+    const addButtons = document.querySelectorAll('.btn-success');
+    for (let button of addButtons) {
+        button.disabled = false;
+        button.classList.remove('btn-disabled');
+    }
+    const removeButtons = document.querySelectorAll('button[type="remove"].btn-danger')
+    for(let button of removeButtons){
+        button.disabled = false;
+        button.classList.remove('btn-disabled')
+    }
+}
+
+function startAnimation() {
+    if(particleSets.length === 0){
+        return;
+    }
+    isRunning = true;
+    disableButtons()
 
     // Clear canvas and set noise seed
     background(0);
@@ -201,219 +251,6 @@ function startAnimation() {
         particleSequence = null;
     }
     updateParticleSetsList();
-}
-
-function restartSequence() {
-    if (particleSets.length > 0) {
-        // Reset all particle sets to their original state
-        particleSets.forEach(set => {
-            set.lifetime = set.originalLifetime;
-            set.generateParticles();
-        });
-        
-        // Create new sequence
-        particleSequence = new ParticleSequence([...particleSets]);
-        updateParticleSetsList();
-    }
-}
-
-// Example presets from original code
-function getExamplePresets() {
-    return {
-        fraud: {
-            options: {
-                scl: 5, magnitude: 4, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 0, globalMoveMethod: "direct", drawShape: "line",
-                shapeSize: "relative", shrink: false, shrinkRate: 0.3, fade: false, fadeRate: 1
-            },
-            sets: [
-                {numParticles: 2000, lifetime: 50, size: 24, color: [255, 255, 255], alpha: 2},
-                {numParticles: 2000, lifetime: 50, size: 12, color: [255, 255, 255], alpha: 5},
-                {numParticles: 3000, lifetime: 50, size: 6, color: [255, 255, 255], alpha: 10},
-                {numParticles: 10000, lifetime: 50, size: 3, color: [255, 255, 255], alpha: 20},
-                {numParticles: 15000, lifetime: 75, size: 1, color: [255, 255, 255], alpha: 30}
-            ]
-        },
-        
-        fraud_physics: {
-            options: {
-                scl: 10, magnitude: 3, angleMult: 4, globalSpeedLimit: 3, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 0, globalMoveMethod: "physics", drawShape: "line",
-                shapeSize: "relative", shrink: false, shrinkRate: 0.3, fade: false, fadeRate: 1
-            },
-            sets: [
-                {numParticles: 2000, lifetime: 50, size: 24, color: [255, 255, 255], alpha: 2},
-                {numParticles: 2000, lifetime: 50, size: 12, color: [255, 255, 255], alpha: 5},
-                {numParticles: 3000, lifetime: 50, size: 6, color: [255, 255, 255], alpha: 10},
-                {numParticles: 10000, lifetime: 50, size: 3, color: [255, 255, 255], alpha: 20},
-                {numParticles: 15000, lifetime: 75, size: 1, color: [255, 255, 255], alpha: 30}
-            ]
-        },
-        
-        fraud_shrink: {
-            options: {
-                scl: 5, magnitude: 4, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 0, globalMoveMethod: "direct", drawShape: "line",
-                shapeSize: "relative", shrink: true, shrinkRate: 0.3, fade: false, fadeRate: 1
-            },
-            sets: [
-                {numParticles: 2000, lifetime: 50, size: 24, color: [255, 255, 255], alpha: 2},
-                {numParticles: 2000, lifetime: 50, size: 12, color: [255, 255, 255], alpha: 5},
-                {numParticles: 3000, lifetime: 50, size: 6, color: [255, 255, 255], alpha: 10},
-                {numParticles: 10000, lifetime: 50, size: 3, color: [255, 255, 255], alpha: 20},
-                {numParticles: 15000, lifetime: 75, size: 1, color: [255, 255, 255], alpha: 30}
-            ]
-        },
-        
-        fraud_meat: {
-            options: {
-                scl: 5, magnitude: 4, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 0, globalMoveMethod: "direct", drawShape: "line",
-                shapeSize: "relative", shrink: false, shrinkRate: 0.3, fade: false, fadeRate: 1,
-                shapeFill: [207, 124, 105]
-            },
-            sets: [
-                {numParticles: 5000, lifetime: 30, size: 12, color: [55, 19, 49], alpha: 80},
-                {numParticles: 2000, lifetime: 30, size: 6, color: [17, 6, 15], alpha: 80},
-                {numParticles: 5000, lifetime: 30, size: 3, color: [74, 25, 66], alpha: 100},
-                {numParticles: 5000, lifetime: 40, size: 2, color: [93, 31, 83], alpha: 80},
-                {numParticles: 10000, lifetime: 30, size: 2, color: [112, 38, 100], alpha: 70},
-                {numParticles: 10000, lifetime: 15, size: 1, color: [131, 44, 117], alpha: 50},
-                {numParticles: 10000, lifetime: 30, size: 2, color: [238, 238, 238], alpha: 5},
-                {numParticles: 3000, lifetime: 30, size: 2, color: [255, 255, 255], alpha: 10}
-            ]
-        },
-        
-        pond: {
-            options: {
-                scl: 5, magnitude: 1, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 0, globalMoveMethod: "direct", drawShape: "line",
-                shapeSize: "direct", shrink: true, shrinkRate: 0.3, fade: true, fadeRate: 1,
-                shapeFill: [100, 150, 255]
-            },
-            sets: [
-                {numParticles: 50, lifetime: 100, size: 24, color: [255, 255, 255], alpha: 100},
-                {numParticles: 50, lifetime: 100, size: 12, color: [255, 255, 255], alpha: 100},
-                {numParticles: 50, lifetime: 100, size: 6, color: [255, 255, 255], alpha: 100},
-                {numParticles: 50, lifetime: 100, size: 3, color: [255, 255, 255], alpha: 100},
-                {numParticles: 50, lifetime: 100, size: 2, color: [255, 255, 255], alpha: 100},
-                {numParticles: 50, lifetime: 500, size: 1, color: [255, 255, 255], alpha: 100}
-            ]
-        },
-        
-        overcrowd: {
-            options: {
-                scl: 5, magnitude: 4, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 0, globalMoveMethod: "direct", drawShape: "line",
-                shapeSize: "relative", shrink: true, shrinkRate: 0.3, fade: true, fadeRate: 1,
-                shapeFill: [255, 100, 100]
-            },
-            sets: [
-                {numParticles: 800, lifetime: 100, size: 24, color: [255, 255, 255], alpha: 100},
-                {numParticles: 800, lifetime: 100, size: 12, color: [255, 255, 255], alpha: 100},
-                {numParticles: 800, lifetime: 100, size: 6, color: [255, 255, 255], alpha: 100},
-                {numParticles: 800, lifetime: 100, size: 3, color: [255, 255, 255], alpha: 100},
-                {numParticles: 800, lifetime: 100, size: 2, color: [255, 255, 255], alpha: 100},
-                {numParticles: 800, lifetime: 500, size: 1, color: [255, 255, 255], alpha: 100}
-            ]
-        },
-        
-        eex: {
-            options: {
-                scl: 5, magnitude: 1, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 100, globalMoveMethod: "direct", drawShape: "arc",
-                shapeSize: "direct", shrink: false, shrinkRate: 0.3, fade: false, fadeRate: 5,
-                shapeFill: [0, 0, 0]
-            },
-            sets: [
-                {numParticles: 5000, lifetime: 30, size: 12, color: [55, 19, 49], alpha: 80},
-                {numParticles: 2000, lifetime: 30, size: 6, color: [17, 6, 15], alpha: 80},
-                {numParticles: 5000, lifetime: 30, size: 3, color: [74, 25, 66], alpha: 100},
-                {numParticles: 5000, lifetime: 40, size: 2, color: [93, 31, 83], alpha: 80},
-                {numParticles: 10000, lifetime: 30, size: 2, color: [112, 38, 100], alpha: 70}
-            ]
-        },
-        
-        eeex: {
-            options: {
-                scl: 5, magnitude: 1, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 100, globalMoveMethod: "direct", drawShape: "arc",
-                shapeSize: "direct", shrink: true, shrinkRate: 0.3, fade: false, fadeRate: 1,
-                shapeFill: [0, 0, 0]
-            },
-            sets: [
-                {numParticles: 5000, lifetime: 30, size: 12, color: [55, 19, 49], alpha: 80},
-                {numParticles: 2000, lifetime: 30, size: 6, color: [17, 6, 15], alpha: 80},
-                {numParticles: 5000, lifetime: 30, size: 3, color: [74, 25, 66], alpha: 100},
-                {numParticles: 5000, lifetime: 40, size: 2, color: [93, 31, 83], alpha: 80},
-                {numParticles: 10000, lifetime: 30, size: 2, color: [112, 38, 100], alpha: 70}
-            ]
-        },
-        
-        ef: {
-            options: {
-                scl: 5, magnitude: 1, angleMult: 1, globalSpeedLimit: 1, noiseScale: 0.01,
-                edgeWrap: false, spawnSpillover: 100, globalMoveMethod: "direct", drawShape: "arc",
-                shapeSize: "direct", shrink: false, shrinkRate: 0.3, fade: true, fadeRate: 5,
-                shapeFill: [0, 0, 0]
-            },
-            sets: [
-                {numParticles: 5000, lifetime: 30, size: 12, color: [55, 19, 49], alpha: 80},
-                {numParticles: 2000, lifetime: 30, size: 6, color: [17, 6, 15], alpha: 80},
-                {numParticles: 5000, lifetime: 30, size: 3, color: [74, 25, 66], alpha: 100},
-                {numParticles: 5000, lifetime: 40, size: 2, color: [93, 31, 83], alpha: 80},
-                {numParticles: 10000, lifetime: 30, size: 2, color: [112, 38, 100], alpha: 70}
-            ]
-        }
-    };
-}
-
-function loadExample(exampleName) {
-    const presets = getExamplePresets();
-    const preset = presets[exampleName];
-    noiseSeed(frameCount);
-    
-    if (!preset) {
-        console.error('Example not found:', exampleName);
-        return;
-    }
-    
-    // Clear existing particle sets
-    particleSets = [];
-    particleSequence = null;
-    
-    // Create particle sets from the preset
-    preset.sets.forEach(setData => {
-        const options = {
-            ...preset.options,
-            shapeFill: preset.options.shapeFill ? 
-                createVector(preset.options.shapeFill[0], preset.options.shapeFill[1], preset.options.shapeFill[2]) :
-                createVector(255, 255, 255)
-        };
-        
-        const particleSet = new ParticleSet(
-            setData.numParticles,
-            setData.lifetime,
-            setData.size,
-            createVector(setData.color[0], setData.color[1], setData.color[2]),
-            setData.alpha,
-            options
-        );
-        
-        particleSets.push(particleSet);
-    });
-    
-    // Create sequence
-    particleSequence = new ParticleSequence([...particleSets]);
-    
-    // Update UI
-    updateParticleSetsList();
-    
-    // Auto-start the animation
-    isRunning = true;
-    
-    // Clear canvas for fresh start
-    background(0);
 }
 
 function randomizeParameters() {
@@ -443,7 +280,7 @@ function randomizeParameters() {
     const moveMethodOptions = ['direct', 'physics'];
     document.getElementById('globalMoveMethod').value = moveMethodOptions[Math.floor(Math.random() * moveMethodOptions.length)];
     
-    const shapeOptions = ['line', 'arc', 'circle'];
+    const shapeOptions = ['square'];
     document.getElementById('drawShape').value = shapeOptions[Math.floor(Math.random() * shapeOptions.length)];
     
     const sizeOptions = ['relative', 'direct'];
@@ -494,6 +331,106 @@ function savePreset() {
     URL.revokeObjectURL(url);
 }
 
+// Load preset from file
+function loadPresetFromFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (file.type !== 'application/json') {
+        alert('Please select a valid JSON preset file.');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const preset = JSON.parse(e.target.result);
+            loadPresetData(preset);
+            
+            // Reset file input
+            event.target.value = '';
+        } catch (error) {
+            console.error('Error parsing preset file:', error);
+            alert('Error loading preset: Invalid JSON format');
+        }
+    };
+    reader.readAsText(file);
+}
+
+function loadPresetFromPath(exampleName) {
+    fetch("/examples/" + exampleName + ".json")
+        .then(r => r.json())
+        .then(preset => {
+            loadPresetData(preset);
+            startAnimation();
+        });
+}
+
+function loadPresetData(preset) {
+    // Validate preset structure
+    if (!preset.particleSets || !Array.isArray(preset.particleSets)) {
+        alert('Invalid preset format: missing particleSets array');
+        return;
+    }
+    
+    // Clear existing particle sets
+    particleSets = [];
+    particleSequence = null;
+    
+    try {
+        // Create particle sets from the preset
+        preset.particleSets.forEach(setData => {
+            // Validate required properties
+            if (!setData.numParticles || !setData.lifetime || !setData.size || 
+                !setData.color || !setData.options) {
+                throw new Error('Missing required particle set properties');
+            }
+            
+            // Reconstruct options with proper vector objects
+            const options = {
+                ...setData.options,
+                shapeFill: setData.options.shapeFill ? 
+                    createVector(setData.options.shapeFill.x, setData.options.shapeFill.y, setData.options.shapeFill.z) :
+                    createVector(255, 255, 255)
+            };
+            
+            const particleSet = new ParticleSet(
+                setData.numParticles,
+                setData.lifetime,
+                setData.size,
+                createVector(setData.color.x, setData.color.y, setData.color.z),
+                setData.alpha,
+                options
+            );
+            
+            particleSets.push(particleSet);
+        });
+        
+        // Create sequence
+        if (particleSets.length > 0) {
+            particleSequence = new ParticleSequence([...particleSets]);
+        }
+        
+        // Update UI
+        updateParticleSetsList();
+        
+        // Clear canvas for fresh start
+        background(0);
+        
+        console.log(`Loaded preset with ${particleSets.length} particle sets`);
+        
+    } catch (error) {
+        console.error('Error creating particle sets from preset:', error);
+        alert('Error loading preset: ' + error.message);
+        
+        // Reset state on error
+        particleSets = [];
+        particleSequence = null;
+        updateParticleSetsList();
+    }
+}
+
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('particle-form').addEventListener('submit', function(e) {
@@ -504,3 +441,109 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize
     updateParticleSetsList();
 });
+
+let tooltip = null;
+
+// Helper function to format color as a colored square
+function formatColorSquare(colorVector, label) {
+    const r = Math.round(colorVector.x);
+    const g = Math.round(colorVector.y);
+    const b = Math.round(colorVector.z);
+    return `${label}: <span style="display: inline-block; width: 12px; height: 12px; background-color: rgb(${r}, ${g}, ${b}); border: 1px solid #666; vertical-align: middle; margin-left: 5px;"></span>`;
+}
+
+function showTooltip(event, set) {
+    // Remove existing tooltip
+    hideTooltip();
+    
+    // Create tooltip element
+    tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    
+    
+    
+    // Helper function to format boolean
+    function formatBoolean(value) {
+        return value ? 'Yes' : 'No';
+    }
+    
+    // Create tooltip content
+    tooltip.innerHTML = `
+        <div class="tooltip-section">
+            <div class="tooltip-title">Basic Properties</div>
+            Particles: ${set.numParticles}<br>
+            Lifetime: ${set.lifetime}/${set.originalLifetime}<br>
+            Size: ${set.size}<br>
+            ${formatColorSquare(set.color, 'Color')}<br>
+            Alpha: ${set.alpha}
+        </div>
+        
+        <div class="tooltip-section">
+            <div class="tooltip-title">Physics</div>
+            Movement: ${set.globalMoveMethod}<br>
+            Scale: ${set.scl}<br>
+            Magnitude: ${set.magnitude}<br>
+            Angle Mult: ${set.angleMult}<br>
+            Speed Limit: ${set.globalSpeedLimit}<br>
+            Noise Scale: ${set.noiseScale}<br>
+            Spillover: ${set.spawnSpillover}<br>
+            Edge Wrap: ${formatBoolean(set.edgeWrap)}
+        </div>
+        
+        <div class="tooltip-section">
+            <div class="tooltip-title">Shape & Animation</div>
+            Shape: ${set.drawShape}<br>
+            Shape Size: ${set.shapeSize}<br>
+            ${formatColorSquare(set.shapeFill, 'Shape Fill')}<br>
+            Shrink: ${formatBoolean(set.shrink)} (Rate: ${set.shrinkRate})<br>
+            Fade: ${formatBoolean(set.fade)} (Rate: ${set.fadeRate})
+        </div>
+    `;
+    
+    // Add tooltip to document
+    document.body.appendChild(tooltip);
+    
+    // Position tooltip
+    moveTooltip(event);
+    
+    // Show tooltip with animation
+    setTimeout(() => {
+        if (tooltip) {
+            tooltip.classList.add('visible');
+        }
+    }, 10);
+}
+
+function hideTooltip() {
+    if (tooltip) {
+        tooltip.remove();
+        tooltip = null;
+    }
+}
+
+function moveTooltip(event) {
+    if (!tooltip) return;
+    
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    let left = event.clientX - tooltipRect.width - 15;
+    let top = event.clientY + 15;
+    
+    if (top + tooltipRect.height > windowHeight) {
+        top = event.clientY - tooltipRect.height - 15;
+    }
+    
+    // Ensure tooltip doesn't go off-screen
+    left = Math.max(5, left);
+    top = Math.max(5, top);
+    
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+}
+
+function toggleSection(header) {
+    const section = header.parentNode;
+    section.classList.toggle('open');
+}

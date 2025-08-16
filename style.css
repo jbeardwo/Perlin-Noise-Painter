@@ -103,12 +103,53 @@ button:hover {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
+
 .btn-danger {
     background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
 }
 
+.btn-danger.btn-disabled {
+    background: gray !important;
+    color: white !important;
+    cursor: not-allowed;
+}
+
 .btn-success {
     background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+}
+
+.btn-success.btn-disabled {
+    background: gray !important;
+    color: white !important;
+    cursor: not-allowed;
+}
+
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.file-input-wrapper input[type=file] {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-input-button {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+}
+
+.file-input-button:hover {
+    background: #357abd;
 }
 
 .particle-set-item {
@@ -122,6 +163,40 @@ button:hover {
 
 .particle-set-item:hover {
     background: rgba(255, 255, 255, 0.15);
+}
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    z-index: 1000;
+    border: 1px solid #555;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.tooltip.visible {
+    opacity: 1;
+}
+
+.tooltip-section {
+    margin-bottom: 8px;
+}
+
+.tooltip-section:last-child {
+    margin-bottom: 0;
+}
+
+.tooltip-title {
+    color: #4ade80;
+    font-weight: bold;
+    margin-bottom: 3px;
 }
 
 .particle-set-header {

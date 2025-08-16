@@ -22,15 +22,15 @@
                     <div class="collapsible-inner">
                         <p>Click to try a pre-made example:</p>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                            <button onclick="loadExample('fraud')" class="btn-success">Fraud</button>
-                            <button onclick="loadExample('fraud_physics')" class="btn-success">Fraud Physics</button>
-                            <button onclick="loadExample('fraud_shrink')" class="btn-success">Fraud Shrink</button>
-                            <button onclick="loadExample('fraud_meat')" class="btn-success">Fraud Meat</button>
-                            <button onclick="loadExample('pond')" class="btn-success">Pond</button>
-                            <button onclick="loadExample('overcrowd')" class="btn-success">Overcrowd</button>
-                            <button onclick="loadExample('eex')" class="btn-success">Eex</button>
-                            <button onclick="loadExample('eeex')" class="btn-success">Eeex</button>
-                            <button onclick="loadExample('ef')" class="btn-success">Ef</button>
+                            <button onclick="loadPresetFromPath('fraud')" class="btn-success">Fraud</button>
+                            <button onclick="loadPresetFromPath('fraud_physics')" class="btn-success">Fraud Physics</button>
+                            <button onclick="loadPresetFromPath('fraud_shrink')" class="btn-success">Fraud Shrink</button>
+                            <button onclick="loadPresetFromPath('fraud_meat')" class="btn-success">Fraud Meat</button>
+                            <button onclick="loadPresetFromPath('pond')" class="btn-success">Pond</button>
+                            <button onclick="loadPresetFromPath('overcrowd')" class="btn-success">Overcrowd</button>
+                            <button onclick="loadPresetFromPath('eex')" class="btn-success">Eex</button>
+                            <button onclick="loadPresetFromPath('eeex')" class="btn-success">Eeex</button>
+                            <button onclick="loadPresetFromPath('ef')" class="btn-success">Ef</button>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,36 @@
                         <label>Alpha (0-255)</label>
                         <input type="number" id="alpha" min="0" max="255" value="255">
                     </div>
-                    
+
+                   <!-- Shape Options - Collapsible -->
+                    <div class="collapsible-section">
+                        <div class="collapsible-header" onclick="toggleSection(this)">
+                            <h3>Shape Options</h3>
+                            <span class="collapsible-arrow">▶</span>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-inner">
+                                <div class="form-group">
+                                    <label>Shape</label>
+                                    <select id="drawShape">
+                                        <option value="line">Line</option>
+                                        <option value="arc">Arc</option>
+                                        <option value="circle">Circle</option>
+                                        <option value="square">Square</option>
+
+                                    </select>
+                                </div>
+                                
+                                
+                                
+                                <div class="form-group">
+                                    <label>Shape Fill Color</label>
+                                    <input type="color" id="shapeFill" value="#ffffff" class="color-input">
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+
                     <!-- Physics Options - Collapsible -->
                     <div class="collapsible-section">
                         <div class="collapsible-header" onclick="toggleSection(this)">
@@ -124,38 +153,7 @@
                         </div>
                     </div>
                     
-                    <!-- Shape Options - Collapsible -->
-                    <div class="collapsible-section">
-                        <div class="collapsible-header" onclick="toggleSection(this)">
-                            <h3>Shape Options</h3>
-                            <span class="collapsible-arrow">▶</span>
-                        </div>
-                        <div class="collapsible-content">
-                            <div class="collapsible-inner">
-                                <div class="form-group">
-                                    <label>Draw Shape</label>
-                                    <select id="drawShape">
-                                        <option value="line">Line</option>
-                                        <option value="arc">Arc</option>
-                                        <option value="circle">Circle</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Shape Size</label>
-                                    <select id="shapeSize">
-                                        <option value="relative">Relative</option>
-                                        <option value="direct">Direct</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Shape Fill Color</label>
-                                    <input type="color" id="shapeFill" value="#ffffff" class="color-input">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                     
                     <!-- Animation Options - Collapsible -->
                     <div class="collapsible-section">
@@ -177,6 +175,13 @@
                                         <label>Shrink Rate</label>
                                         <input type="number" id="shrinkRate" value="0.3" min="0" step="0.1">
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Shrink Type</label>
+                                    <select id="shapeSize">
+                                        <option value="relative">Relative</option>
+                                        <option value="direct">Direct</option>
+                                    </select>
                                 </div>
                                 
                                 <div class="row">
@@ -215,11 +220,15 @@
         <div class="play-panel">
           <div class="canvas-controls">
                 <button onclick="startAnimation()">Start</button>
-                <button onclick="saveCanvas('particleArt.png')">Save</button>
+                <button onclick="saveCanvas('particleArt.png')">Save Image</button>
                 <!-- <button onclick="stopAnimation()">Stop</button> -->
                 <!-- <button onclick="restartSequence()">Restart Sequence</button> -->
-                <!-- <button onclick="clearCanvas()">Clear</button> -->
-                <!-- <button onclick="savePreset()">Save Preset</button> -->
+                <button onclick="clearCanvas()">Clear</button>
+                <button onclick="savePreset()">Save Preset</button>
+                <div class="file-input-wrapper">
+                    <input type="file" id="presetFileInput" accept=".json" onchange="loadPresetFromFile(event)">
+                    <label for="presetFileInput" class="file-input-button">Load Preset</label>
+                </div>
           </div>
 
           <div class="section">

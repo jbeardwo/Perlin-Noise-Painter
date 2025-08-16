@@ -12,7 +12,7 @@ class ParticleSequence{
         // Update current set
         currentSet.show();
         currentSet.update();
-        currentSet.follow(flowfield);
+        currentSet.follow( );
         currentSet.edges();
         
         

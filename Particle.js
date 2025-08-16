@@ -34,21 +34,23 @@ class Particle{
     }
 
     updateDirect(){
-        if (this.pos.x >= width) {
-            this.pos.x -= width;
-            this.prevPos.x -= width;
-        } else if (this.pos.x < 0) {
-            this.pos.x += width;
-            this.prevPos.x += width;
-        }
+        //deprecated, moved edge detection for edges()
+        //leaving for possible future use
+        // if (this.pos.x >= width) {
+        //     this.pos.x -= width;
+        //     this.prevPos.x -= width;
+        // } else if (this.pos.x < 0) {
+        //     this.pos.x += width;
+        //     this.prevPos.x += width;
+        // }
         
-        if (this.pos.y >= height) {
-            this.pos.y -= height;
-            this.prevPos.y -= height;
-        } else if (this.pos.y < 0) {
-            this.pos.y += height;
-            this.prevPos.y += height;
-        }
+        // if (this.pos.y >= height) {
+        //     this.pos.y -= height;
+        //     this.prevPos.y -= height;
+        // } else if (this.pos.y < 0) {
+        //     this.pos.y += height;
+        //     this.prevPos.y += height;
+        // }
     }
 
     applyForce(force) {
@@ -79,25 +81,25 @@ class Particle{
         }
     }
 
-    follow(vectors, method = this.method){
+    follow(method = this.method){
         if(method === "physics"){
-            this.followPhysics(vectors);
+            this.followPhysics();
         } else if(method === "direct"){
-            this.followDirect(vectors);
+            this.followDirect();
         }
     }
 
-    followPhysics(vectors){
+    followPhysics(){
         // Physics simulation with acc / vel
         let x = floor(this.pos.x / this.parent.scl);
         let y = floor(this.pos.y / this.parent.scl);
-        let angle = noise(x * noiseScale, y * noiseScale) * angleMult * TWO_PI;
+        let angle = noise(x * noiseScale, y * noiseScale) * this.parent.angleMult * TWO_PI;
         let v = p5.Vector.fromAngle(angle);
         v.setMag(magnitude);
         this.applyForce(v);
     }
 
-    followDirect(vectors){  
+    followDirect(){  
         // Direct movement version
         this.prevPos.x = this.pos.x;
         this.prevPos.y = this.pos.y;
@@ -116,6 +118,7 @@ class Particle{
         let r;
         fill(this.parent.shapeFill.x, this.parent.shapeFill.y, this.parent.shapeFill.z);
 
+        //We could invert the if statement and check mode / set r first, but leaving it like this in case individual behavior needs adjusting
         if(this.parent.drawShape == "line"){
             line(this.pos.x, this.pos.y, this.prevPos.x, this.prevPos.y);
         }else if(this.parent.drawShape == "arc"){
@@ -131,10 +134,26 @@ class Particle{
             arc(this.pos.x, this.pos.y, r, r, 0, PI);
         }else if(this.parent.drawShape == "circle"){
             if(this.parent.shrink){
-                ellipse(this.pos.x, this.pos.y, this.lifetime, this.lifetime);
+                if(this.parent.shapeSize == "relative"){
+                    r = map(this.lifetime, 0, this.fullLife, 0, this.size);
+                }else if(this.parent.shapeSize == "direct"){
+                    r = this.lifetime;
+                }
             } else {
-                ellipse(this.pos.x, this.pos.y, this.size, this.size);
+                r = this.size;
             }
+            ellipse(this.pos.x, this.pos.y, r, r);
+        }else if(this.parent.drawShape == "square"){
+            if(this.parent.shrink){
+                if(this.parent.shapeSize == "relative"){
+                    r = map(this.lifetime, 0, this.fullLife, 0, this.size);
+                }else if(this.parent.shapeSize == "direct"){
+                    r = this.lifetime;
+                }
+            } else {
+                r = this.size;
+            }
+            square(this.pos.x, this.pos.y, r);
         }
     }
 }
