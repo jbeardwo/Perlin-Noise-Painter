@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6"
+    "target": "ES6", // Or a higher ES version like "ES2020" if needed
+    "moduleResolution": "node", // Common for resolving modules
+    "allowJs": true, // Important to include JavaScript files
   },
   "include": [
-    "*.js",
-    "**/*.js",
-    "c:\\Users\\junky\\.vscode\\extensions\\samplavigne.p5-vscode-1.2.16\\p5types\\global.d.ts"
+    "**/*.js", // Includes all JS files recursively
+    "libraries/**/*.js" // Specifically includes JS files in the libraries folder and its subdirectories
+  ],
+  "exclude": [
+    "node_modules", // Exclude common dependency folders if applicable
+    ".git"
   ]
 }
