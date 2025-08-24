@@ -24,8 +24,8 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                             <button onclick="loadPresetFromPath('fraud')" class="btn-success">Fraud</button>
                             <button onclick="loadPresetFromPath('fraud_physics')" class="btn-success">Fraud Physics</button>
-                            <button onclick="loadPresetFromPath('fraud_shrink')" class="btn-success">Fraud Shrink</button>
-                            <button onclick="loadPresetFromPath('fraud_meat')" class="btn-success">Fraud Meat</button>
+                            <button onclick="loadPresetFromPath('ocean')" class="btn-success">Ocean</button>
+                            <button onclick="loadPresetFromPath('fraud_meat')" class="btn-success">Meat</button>
                             <button onclick="loadPresetFromPath('pond')" class="btn-success">Pond</button>
                             <button onclick="loadPresetFromPath('overcrowd')" class="btn-success">Overcrowd</button>
                             <button onclick="loadPresetFromPath('eex')" class="btn-success">Eex</button>
@@ -219,15 +219,15 @@
 
         <div class="play-panel">
           <div class="canvas-controls">
-                <button onclick="startAnimation()">Start</button>
-                <button onclick="saveCanvas('particleArt.png')">Save Image</button>
-                <!-- <button onclick="stopAnimation()">Stop</button> -->
+                <button class="button-like" onclick="startAnimation()">Start</button>
+                <button class="button-like" onclick="saveCanvas('particleArt.png')">Save Image</button>
+                <button onclick="stopAnimation()">Stop</button>
                 <!-- <button onclick="restartSequence()">Restart Sequence</button> -->
-                <button onclick="clearCanvas()">Clear</button>
-                <button onclick="savePreset()">Save Preset</button>
+                <button class="button-like" onclick="clearCanvas()">Clear</button>
+                <button class="button-like" onclick="savePreset()">Save Preset</button>
                 <div class="file-input-wrapper">
                     <input type="file" id="presetFileInput" accept=".json" onchange="loadPresetFromFile(event)">
-                    <label for="presetFileInput" class="file-input-button">Load Preset</label>
+                    <label for="presetFileInput" class="button-like">Load Preset</label>
                 </div>
           </div>
 

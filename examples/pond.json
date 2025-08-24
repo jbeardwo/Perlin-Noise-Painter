@@ -21,7 +21,11 @@
         "globalMoveMethod": "direct",
         "drawShape": "line",
         "shapeSize": "direct",
-        "shapeFill": {},
+        "shapeFill": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
         "shrink": true,
         "shrinkRate": 0.3,
         "fade": true,
@@ -49,7 +53,11 @@
         "globalMoveMethod": "direct",
         "drawShape": "line",
         "shapeSize": "direct",
-        "shapeFill": {},
+        "shapeFill": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
         "shrink": true,
         "shrinkRate": 0.3,
         "fade": true,
@@ -77,7 +85,11 @@
         "globalMoveMethod": "direct",
         "drawShape": "line",
         "shapeSize": "direct",
-        "shapeFill": {},
+        "shapeFill": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
         "shrink": true,
         "shrinkRate": 0.3,
         "fade": true,
@@ -105,7 +117,11 @@
         "globalMoveMethod": "direct",
         "drawShape": "line",
         "shapeSize": "direct",
-        "shapeFill": {},
+        "shapeFill": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
         "shrink": true,
         "shrinkRate": 0.3,
         "fade": true,
@@ -133,7 +149,11 @@
         "globalMoveMethod": "direct",
         "drawShape": "line",
         "shapeSize": "direct",
-        "shapeFill": {},
+        "shapeFill": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
         "shrink": true,
         "shrinkRate": 0.3,
         "fade": true,
@@ -142,7 +162,7 @@
     },
     {
       "numParticles": 50,
-      "lifetime": 500,
+      "lifetime": 10,
       "size": 1,
       "color": {
         "x": 255,
@@ -161,9 +181,77 @@
         "globalMoveMethod": "direct",
         "drawShape": "line",
         "shapeSize": "direct",
-        "shapeFill": {},
+        "shapeFill": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
         "shrink": true,
         "shrinkRate": 0.3,
+        "fade": true,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 2,
+      "lifetime": 3,
+      "size": 10,
+      "color": {
+        "x": 65,
+        "y": 150,
+        "z": 8
+      },
+      "alpha": 198,
+      "options": {
+        "scl": 5,
+        "magnitude": 4,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.008,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "arc",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 8,
+          "y": 104,
+          "z": 32
+        },
+        "shrink": true,
+        "shrinkRate": 2,
+        "fade": true,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 50,
+      "lifetime": 10,
+      "size": 100,
+      "color": {
+        "x": 255,
+        "y": 255,
+        "z": 255
+      },
+      "alpha": 10,
+      "options": {
+        "scl": 5,
+        "magnitude": 1,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 0,
+        "globalMoveMethod": "direct",
+        "drawShape": "line",
+        "shapeSize": "relative",
+        "shapeFill": {
+          "x": 255,
+          "y": 255,
+          "z": 255
+        },
+        "shrink": true,
+        "shrinkRate": 5,
         "fade": true,
         "fadeRate": 1
       }
