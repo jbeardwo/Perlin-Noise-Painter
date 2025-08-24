@@ -7,12 +7,13 @@ let noiseScale = 0.01;
 let magnitude = 1;
 let isRunning = false;
 let fpsCounter;
-
+let tooltip = null;
 
 
 
 // p5.js sketch
 function setup() {
+
   let canvasSize = 720
   canvas = createCanvas(canvasSize, canvasSize);
   canvas.parent('p5-canvas');
@@ -22,9 +23,9 @@ function setup() {
   fpsCounter = select('#fps-counter');
 }
 
-
-
+// p5.js draw function, runs once per frame
 function draw() {
+  // main loop
   if (isRunning && particleSequence) {
     particleSequence.execute();
     updateParticleSetsList();
@@ -33,8 +34,9 @@ function draw() {
     if (particleSequence.curr >= particleSets.length) {
       isRunning = false;
 
-      // Re-enable the add button
+      // Re-enable the buttons
       enableButtons();
+      updateParticleSetsList();
     }
   }
 
@@ -54,6 +56,7 @@ function hexToRgb(hex) {
   } : null;
 }
 
+// Adding a single set through UI
 function addParticleSet() {
   const form = document.getElementById('particle-form');
   const formData = new FormData(form);
@@ -63,7 +66,7 @@ function addParticleSet() {
   const shapeFillHex = document.getElementById('shapeFill').value;
   const colorRgb = hexToRgb(colorHex);
   const shapeFillRgb = hexToRgb(shapeFillHex);
-
+  // Get option values
   const options = {
     scl: parseFloat(document.getElementById('scl').value),
     magnitude: parseFloat(document.getElementById('magnitude').value),
@@ -81,7 +84,7 @@ function addParticleSet() {
     fade: document.getElementById('fade').value === 'true',
     fadeRate: parseFloat(document.getElementById('fadeRate').value)
   };
-
+  // instantiate Set
   const particleSet = new ParticleSet(
     parseInt(document.getElementById('numParticles').value),
     parseInt(document.getElementById('lifetime').value),
@@ -90,109 +93,109 @@ function addParticleSet() {
     parseInt(document.getElementById('alpha').value),
     options
   );
-
+  // add to Sets list and update  UI
   particleSets.push(particleSet);
   updateParticleSetsList();
 }
 
+// Remove Set with UI button
 function removeParticleSet(id) {
   particleSets = particleSets.filter(set => set.id !== id);
+  hideTooltip();
   updateParticleSetsList();
 }
 
+// Update the currently visible set UI forms
 function updateParticleSetsList() {
   const list = document.getElementById('particle-sets-list');
-
-  // Get existing items
-  const existingItems = list.querySelectorAll('.particle-set-item');
-  const existingSequenceInfo = list.querySelector('.sequence-info');
-
-  // Update existing particle set items or create new ones
+  // Recreates every time, prevents UI interaction bugs
+  list.innerHTML = '';
+  // Create each set's UI Form
   particleSets.forEach((set, index) => {
-    let item = existingItems[index];
+    const item = document.createElement('div');
+    item.className = 'particle-set-item';
 
-    // Create new item if it doesn't exist
-    if (!item) {
-      item = document.createElement('div');
-      item.className = 'particle-set-item';
-
-      // Create the structure once
-      item.innerHTML = `
-                <div class="particle-set-header">
-                    <strong class="set-title">Set ${index + 1}<span class="status-text"></span></strong>
-                    <div class="particle-set-controls">
-                        <button type="remove" class="small-btn btn-danger" onclick="removeParticleSet(${set.id})">Remove</button>
-                    </div>
-                </div>
-                <div class="set-details">
-                    Particles: ${set.numParticles} | 
-                    Lifetime: <span class="lifetime-text"></span> | 
-                    Shape: <span class="shape-info">${set.drawShape}</span>
-                </div>
-            `;
-
-      // Add hover events for tooltip (only once when creating)
-      item.addEventListener('mouseenter', (e) => showTooltip(e, set));
-      item.addEventListener('mouseleave', hideTooltip);
-      item.addEventListener('mousemove', moveTooltip);
-
-      list.insertBefore(item, existingSequenceInfo);
-    }
-
-    // Update only the changing parts
+    // Status (Running, Waiting, Done)
     const isActive = particleSequence && particleSequence.curr === index;
-    const statusText = (isActive && isRunning) ? ' (ACTIVE)' : index < (particleSequence ? particleSequence.curr : 0) ? ' (COMPLETED)' : ' (WAITING)';
-    const statusColor = isActive ? '#4ade80' : index < (particleSequence ? particleSequence.curr : 0) ? '#6b7280' : '#fbbf24';
+    const statusText = (isActive && isRunning)
+      ? ' (ACTIVE)'
+      : index < (particleSequence ? particleSequence.curr : 0)
+        ? ' (COMPLETED)'
+        : ' (WAITING)';
+    const statusColor = isActive
+      ? '#4ade80'
+      : index < (particleSequence ? particleSequence.curr : 0)
+        ? '#6b7280'
+        : '#fbbf24';
 
-    // Update just the status text and color
-    const statusElement = item.querySelector('.status-text');
-    statusElement.textContent = statusText;
-    statusElement.style.color = statusColor;
+    // Build Set UI Element from HTML
+    item.innerHTML = `
+      <div class="particle-set-header">
+        <strong class="set-title">Set ${index + 1}
+          <span class="status-text" style="color: ${statusColor};">
+            ${statusText}
+          </span>
+        </strong>
+        <div class="particle-set-controls">
+          <button 
+            type="button" 
+            class="small-btn btn-danger remove-btn ${isRunning ? 'btn-disabled' : ''}" 
+            data-id="${set.id}">
+            Remove
+          </button>
+        </div>
+      </div>
+      <div class="set-details">
+        Particles: ${set.numParticles} | 
+        Lifetime: <span class="lifetime-text">${Math.max(set.lifetime, 0)}/${set.originalLifetime}</span> | 
+        Shape: <span class="shape-info">
+          ${set.drawShape} | 
+          ${formatColorSquare(set.color, 'Color')} | 
+          ${formatColorSquare(set.shapeFill, 'Fill')}
+        </span>
+      </div>
+    `;
+    //Event listener for Remove button
+    item.querySelector('.remove-btn').addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'), 10);
+      removeParticleSet(id);
+    });
+    // Event listeners for hover tooltip
+    item.addEventListener('mouseenter', (e) => showTooltip(e, set));
+    item.addEventListener('mouseleave', hideTooltip);
+    item.addEventListener('mousemove', moveTooltip);
 
-    // Update just the lifetime text
-    const lifetimeElement = item.querySelector('.lifetime-text');
-    lifetimeElement.textContent = `${Math.max(set.lifetime, 0)}/${set.originalLifetime}`;
-
-    // Update the shape info with labeled color squares
-    const shapeInfoElement = item.querySelector('.shape-info');
-    shapeInfoElement.innerHTML = `${set.drawShape} | ${formatColorSquare(set.color, 'Color')} | ${formatColorSquare(set.shapeFill, 'Fill')}`;
-
-    // Update the tooltip event to reference the current set data
-    item.onmouseenter = (e) => showTooltip(e, set);
+    list.appendChild(item);
   });
 
-  // Remove extra items if we have fewer particle sets than before
-  for (let i = particleSets.length; i < existingItems.length; i++) {
-    existingItems[i].remove();
-  }
-
-  // Update or create sequence info
-  let sequenceInfo = existingSequenceInfo;
+  //Stats for the whole sequence
   if (particleSequence) {
-    if (!sequenceInfo) {
-      sequenceInfo = document.createElement('div');
-      sequenceInfo.className = 'sequence-info';
-      sequenceInfo.style.cssText = 'margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; font-size: 14px;';
-      list.appendChild(sequenceInfo);
-    }
-
+    const sequenceInfo = document.createElement('div');
+    sequenceInfo.className = 'sequence-info';
+    sequenceInfo.style.cssText = `
+      margin-top: 10px; 
+      padding: 10px; 
+      background: rgba(255,255,255,0.1); 
+      border-radius: 5px; 
+      font-size: 14px;
+    `;
     sequenceInfo.innerHTML = `
-            <strong>Sequence Progress:</strong><br>
-            Current Set: ${Math.min(particleSequence.curr + 1, particleSets.length)} of ${particleSets.length}<br>
-            Status: ${particleSequence.curr >= particleSets.length ? 'Completed' : 'Running'}
-        `;
-  } else if (sequenceInfo) {
-    sequenceInfo.remove();
+      <strong>Sequence Progress:</strong><br>
+      Current Set: ${Math.min(particleSequence.curr + 1, particleSets.length)} of ${particleSets.length}<br>
+      Status: ${particleSequence.curr >= particleSets.length ? 'Completed' : 'Running'}
+    `;
+    list.appendChild(sequenceInfo);
   }
 }
 
-
-
+//stops Animation, keeps last frame
 function stopAnimation() {
   isRunning = false;
   enableButtons();
+  updateParticleSetsList();
 }
 
+// clears background and the whole sequence
 function clearCanvas() {
   background(0);
   particleSets = [];
@@ -202,6 +205,7 @@ function clearCanvas() {
   updateParticleSetsList();
 }
 
+//Disable most UI buttons
 function disableButtons() {
   // Disable the add button
   const addButton = document.querySelectorAll('.btn-success');
@@ -209,13 +213,14 @@ function disableButtons() {
     button.disabled = true;
     button.classList.add('btn-disabled');
   }
-  const removeButtons = document.querySelectorAll('button[type="remove"].btn-danger')
+  const removeButtons = document.querySelectorAll('.btn-danger')
   for (let button of removeButtons) {
     button.disabled = true;
     button.classList.add('btn-disabled')
   }
 }
 
+//enable the buttons we disabled above
 function enableButtons() {
   const addButtons = document.querySelectorAll('.btn-success');
   for (let button of addButtons) {
@@ -229,12 +234,15 @@ function enableButtons() {
   }
 }
 
+//Begin the sequence from the beginning.
+// Clears background before starting.
 function startAnimation() {
   if (particleSets.length === 0) {
     return;
   }
   isRunning = true;
-  disableButtons()
+  disableButtons();
+  hideTooltip();
 
   // Clear canvas and set noise seed
   background(0);
@@ -246,15 +254,17 @@ function startAnimation() {
     set.generateParticles();
   });
 
-  // Always create a new sequence from the current sets
+  // Always create a new sequence, prevents a lot of issues
   if (particleSets.length > 0) {
     particleSequence = new ParticleSequence([...particleSets]);
   } else {
     particleSequence = null;
   }
+  // update ui
   updateParticleSetsList();
 }
 
+// function for random button
 function randomizeParameters() {
   // Basic parameters
   document.getElementById('numParticles').value = Math.floor(Math.random() * 4000) + 500; // 500-4500
@@ -296,6 +306,7 @@ function randomizeParameters() {
   document.getElementById('fadeRate').value = (Math.random() * 3 + 0.5).toFixed(1); // 0.5-3.5
 }
 
+// exports current Sequence and downloads it.
 function savePreset() {
   const preset = {
     particleSets: particleSets.map(set => ({
@@ -333,7 +344,7 @@ function savePreset() {
   URL.revokeObjectURL(url);
 }
 
-// Load preset from file
+// Load preset from user defined file
 function loadPresetFromFile(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -349,8 +360,8 @@ function loadPresetFromFile(event) {
       const preset = JSON.parse(e.target.result);
       loadPresetData(preset);
 
-      // Reset file input
-      event.target.value = '';
+      // Reset file input in case same file uploaded
+      e.target.value = '';
     } catch (error) {
       console.error('Error parsing preset file:', error);
       alert('Error loading preset: Invalid JSON format');
@@ -359,15 +370,25 @@ function loadPresetFromFile(event) {
   reader.readAsText(file);
 }
 
+// Load example preset from path on the website
 function loadPresetFromPath(exampleName) {
-  fetch("/examples/" + exampleName + ".json")
+  // Add a timestamp to bypass cacheing 
+  // This makes development of the examples easier
+  const url = `/examples/${exampleName}.json?t=${new Date().getTime()}`;
+
+  fetch(url)
     .then(r => r.json())
     .then(preset => {
       loadPresetData(preset);
       startAnimation();
+    })
+    .catch(error => {
+      console.error("Error loading preset:", error);
+      alert("Failed to load preset: " + exampleName);
     });
 }
 
+//Handles actual loading after file or path validation / fetching
 function loadPresetData(preset) {
   // Validate preset structure
   if (!preset.particleSets || !Array.isArray(preset.particleSets)) {
@@ -382,7 +403,7 @@ function loadPresetData(preset) {
   try {
     // Create particle sets from the preset
     preset.particleSets.forEach(setData => {
-      // Validate required properties
+      // Validate properties that are required are present
       if (!setData.numParticles || !setData.lifetime || !setData.size ||
         !setData.color || !setData.options) {
         throw new Error('Missing required particle set properties');
@@ -396,6 +417,7 @@ function loadPresetData(preset) {
           createVector(255, 255, 255)
       };
 
+      // Initialize the set
       const particleSet = new ParticleSet(
         setData.numParticles,
         setData.lifetime,
@@ -405,6 +427,7 @@ function loadPresetData(preset) {
         options
       );
 
+      // Add set to Array that becomes the Sequence
       particleSets.push(particleSet);
     });
 
@@ -432,20 +455,6 @@ function loadPresetData(preset) {
   }
 }
 
-
-// Event listeners
-document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('particle-form').addEventListener('submit', function (e) {
-    e.preventDefault();
-    addParticleSet();
-  });
-
-  // Initialize
-  updateParticleSetsList();
-});
-
-let tooltip = null;
-
 // Helper function to format color as a colored square
 function formatColorSquare(colorVector, label) {
   const r = Math.round(colorVector.x);
@@ -454,7 +463,11 @@ function formatColorSquare(colorVector, label) {
   return `${label}: <span style="display: inline-block; width: 12px; height: 12px; background-color: rgb(${r}, ${g}, ${b}); border: 1px solid #666; vertical-align: middle; margin-left: 5px;"></span>`;
 }
 
+// Reveal Tooltip of currently hovered Set UI Element
 function showTooltip(event, set) {
+  if (isRunning) {
+    return;
+  }
   // Remove existing tooltip
   hideTooltip();
 
@@ -469,7 +482,7 @@ function showTooltip(event, set) {
     return value ? 'Yes' : 'No';
   }
 
-  // Create tooltip content
+  // Build tooltip UI element with HTML
   tooltip.innerHTML = `
         <div class="tooltip-section">
             <div class="tooltip-title">Basic Properties</div>
@@ -502,13 +515,13 @@ function showTooltip(event, set) {
         </div>
     `;
 
-  // Add tooltip to document
+  // Add the tooltip
   document.body.appendChild(tooltip);
 
-  // Position tooltip
+  // Move tooltip to mouse
   moveTooltip(event);
 
-  // Show tooltip with animation
+  // Show the tooltip
   setTimeout(() => {
     if (tooltip) {
       tooltip.classList.add('visible');
@@ -516,6 +529,7 @@ function showTooltip(event, set) {
   }, 10);
 }
 
+// Removes the tooltip
 function hideTooltip() {
   if (tooltip) {
     tooltip.remove();
@@ -523,6 +537,7 @@ function hideTooltip() {
   }
 }
 
+// Move the tooltip to the mouse.
 function moveTooltip(event) {
   if (!tooltip) return;
 
@@ -530,6 +545,7 @@ function moveTooltip(event) {
   const windowWidth = window.innerWidth;
   const windowHeight = window.innerHeight;
 
+  // Remember to take into account the page scroll
   let left = window.scrollX + event.clientX - tooltipRect.width - 15;
   let top = window.scrollY + event.clientY + 15;
 
@@ -550,7 +566,21 @@ function moveTooltip(event) {
   tooltip.style.left = left + 'px';
   tooltip.style.top = top + 'px';
 }
+
+// Collapses / uncollapses the collapsable UI Sections.
 function toggleSection(header) {
   const section = header.parentNode;
   section.classList.toggle('open');
 }
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('particle-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    addParticleSet();
+  });
+
+  // Initialize Set List UI
+  updateParticleSetsList();
+});
+

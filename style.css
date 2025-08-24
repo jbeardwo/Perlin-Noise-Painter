@@ -9,36 +9,32 @@ body {
 
 .container {
     display: grid;
-    grid-template-columns: auto 750px auto; /* left and right shrink to content */
+    grid-template-columns: auto 750px auto;
     gap: 20px;
     justify-content: center;
 }
 
 .controls-panel {
-    display: flex;           
-    flex-direction: column;   
-    align-items: center;       
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: fit-content;
-    
+    height: fit-content;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 20px;
     overflow-y: auto;
     border: 1px solid rgba(255, 255, 255, 0.2);
-
-}
-
-.canvas-controls button,
-.file-input-button {
-    min-width: 0; /* allow shrinking below default intrinsic width */
 }
 
 .play-panel {
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    width: auto;
+    max-width: 100%;
+    height: fit-content;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 15px;
@@ -46,24 +42,21 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
-
-    width: auto;          /* let width be natural */
-    max-width: 100%;      /* never exceed parent width */
-    box-sizing: border-box; /* include padding in width */
 }
 
 .play-panel .section {
-    width: 100%;     /* fill panel width */
-    max-width: 100%; /* don’t overflow */
+    width: 100%;
+    max-width: 100%;
 }
 
 .canvas-container {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 15px;
-    padding: 10px; /* more padding */
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: fit-content;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 10px;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -107,8 +100,6 @@ input:focus, select:focus {
     cursor: pointer;
     padding: 4px;
 }
-
-
 
 button {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -273,16 +264,15 @@ button:hover {
 /* Responsive design */
 @media (max-width: 1500px) {
     .container {
-        display: flex;               /* switch to flex */
-        flex-direction: column;      /* stack vertically */
-        align-items: center;         /* center horizontally */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 15px;
     }
 
     .controls-panel,
     .play-panel {
-        width: auto;                 /* shrink to fit content */
-        max-width: 90%;              /* optional: prevent overflow */
+        width: auto;
     }
 }
 
@@ -290,6 +280,7 @@ button:hover {
 /* Collapsible Section Styles */
 
 .collapsible-section {
+    width: fit-content;
     max-width: 720px;
     margin-bottom: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);

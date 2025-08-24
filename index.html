@@ -9,6 +9,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Controls / examples -->
         <div class="controls-panel">
             <h1>Particle System</h1>
             
@@ -28,22 +29,24 @@
                             <button onclick="loadPresetFromPath('fraud_meat')" class="btn-success">Meat</button>
                             <button onclick="loadPresetFromPath('pond')" class="btn-success">Pond</button>
                             <button onclick="loadPresetFromPath('overcrowd')" class="btn-success">Overcrowd</button>
-                            <button onclick="loadPresetFromPath('eex')" class="btn-success">Eex</button>
-                            <button onclick="loadPresetFromPath('eeex')" class="btn-success">Eeex</button>
-                            <button onclick="loadPresetFromPath('ef')" class="btn-success">Ef</button>
+                            <!-- <button onclick="loadPresetFromPath('veins')" class="btn-success">Veins</button> -->
+                            <button onclick="loadPresetFromPath('dahlia')" class="btn-success">Dahlia</button>
+                            <button onclick="loadPresetFromPath('animal_fur')" class="btn-success">Animal Fur</button>
                         </div>
                     </div>
                 </div>
             </div>
-            
+           <!-- New Particle Set Section  -->
             <div class="section">
                 <h2>Add New Particle Set</h2>
+                <!-- Option -->
                 <form id="particle-form">
+                    <!-- Number -->
                     <div class="form-group">
                         <label>Number of Particles</label>
                         <input type="number" id="numParticles" value="1000" min="1" max="10000">
                     </div>
-                    
+                    <!-- Lifetime / Size -->
                     <div class="row">
                         <div class="form-group">
                             <label>Lifetime</label>
@@ -54,16 +57,19 @@
                             <input type="number" id="size" value="3" min="0.1" step="0.1">
                         </div>
                     </div>
-                    
+                    <!-- Color / Alpha -->
+                    <div class="row">
+                    <!-- Color  -->
                     <div class="form-group">
                         <label>Color</label>
                         <input type="color" id="color" value="#ffffff" class="color-input">
                     </div>
-                    
+                    <!-- Alpha  -->
                     <div class="form-group">
                         <label>Alpha (0-255)</label>
                         <input type="number" id="alpha" min="0" max="255" value="255">
                     </div>
+                  </div>
 
                    <!-- Shape Options - Collapsible -->
                     <div class="collapsible-section">
@@ -152,9 +158,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    
-                    
                     <!-- Animation Options - Collapsible -->
                     <div class="collapsible-section">
                         <div class="collapsible-header" onclick="toggleSection(this)">
@@ -200,7 +203,7 @@
                             </div>
                         </div>
                     </div>
-                    
+                   <!-- Add / Randomize Buttons  -->
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
                         <button type="button" onclick="randomizeParameters()" style="flex: 1;">🎲 Randomize Parameters</button>
                         <button type="submit" class="btn-success" style="flex: 1;" ${isRunning ? 'disabled' : ''}>Add Particle Set</button>
@@ -208,33 +211,32 @@
                 </form>
             </div>
             
-            
         </div>
-        
+        <!-- Canvas   -->
         <div class="canvas-container">
             <h2>Particle Simulation</h2>
             <div id="fps-counter" hidden="true">FPS: 0</div>
             <div id="p5-canvas"></div>
         </div>
-
+        <!-- Playback Panel -->
         <div class="play-panel">
-          <div class="canvas-controls">
-                <button class="button-like" onclick="startAnimation()">Start</button>
-                <button class="button-like" onclick="saveCanvas('particleArt.png')">Save Image</button>
-                <button onclick="stopAnimation()">Stop</button>
-                <!-- <button onclick="restartSequence()">Restart Sequence</button> -->
-                <button class="button-like" onclick="clearCanvas()">Clear</button>
-                <button class="button-like" onclick="savePreset()">Save Preset</button>
-                <div class="file-input-wrapper">
-                    <input type="file" id="presetFileInput" accept=".json" onchange="loadPresetFromFile(event)">
-                    <label for="presetFileInput" class="button-like">Load Preset</label>
-                </div>
-          </div>
-
-          <div class="section">
-                <h2>Active Particle Sets</h2>
-                <div id="particle-sets-list"></div>
-            </div>
+        <!-- Playback controls -->
+        <div class="canvas-controls">
+              <button class="button-like" onclick="startAnimation()">Start</button>
+              <button class="button-like" onclick="saveCanvas('particleArt.png')">Save Image</button>
+              <button class="button-like" onclick="stopAnimation()">Stop</button>
+              <button class="button-like" onclick="clearCanvas()">Clear</button>
+              <button class="button-like" onclick="savePreset()">Save Preset</button>
+              <div class="file-input-wrapper">
+                  <input type="file" id="presetFileInput" accept=".json" onchange="loadPresetFromFile(event)">
+                  <label for="presetFileInput" class="button-like">Load Preset</label>
+              </div>
+        </div>
+        <!-- Active Sets -->
+        <div class="section">
+            <h2>Active Particle Sets</h2>
+            <div id="particle-sets-list"></div>
+        </div>
         </div>
     </div>
 

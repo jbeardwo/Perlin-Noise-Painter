@@ -21,11 +21,15 @@
         "globalMoveMethod": "direct",
         "drawShape": "arc",
         "shapeSize": "direct",
-        "shapeFill": {},
-        "shrink": true,
+        "shapeFill": {
+          "x": 0,
+          "y": 15,
+          "z": 127
+        },
+        "shrink": false,
         "shrinkRate": 0.3,
         "fade": false,
-        "fadeRate": 1
+        "fadeRate": 5
       }
     },
     {
@@ -33,8 +37,72 @@
       "lifetime": 30,
       "size": 6,
       "color": {
-        "x": 17,
-        "y": 6,
+        "x": 1,
+        "y": 50,
+        "z": 100
+      },
+      "alpha": 80,
+      "options": {
+        "scl": 5,
+        "magnitude": 1,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 100,
+        "globalMoveMethod": "direct",
+        "drawShape": "arc",
+        "shapeSize": "direct",
+        "shapeFill": {
+          "x": 0,
+          "y": 15,
+          "z": 127
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 5
+      }
+    },
+    {
+      "numParticles": 5000,
+      "lifetime": 30,
+      "size": 3,
+      "color": {
+        "x": 74,
+        "y": 10,
+        "z": 0
+      },
+      "alpha": 100,
+      "options": {
+        "scl": 5,
+        "magnitude": 1,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 100,
+        "globalMoveMethod": "direct",
+        "drawShape": "arc",
+        "shapeSize": "direct",
+        "shapeFill": {
+          "x": 0,
+          "y": 15,
+          "z": 127
+        },
+        "shrink": false,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 5
+      }
+    },
+    {
+      "numParticles": 5000,
+      "lifetime": 40,
+      "size": 2,
+      "color": {
+        "x": 118,
+        "y": 0,
         "z": 15
       },
       "alpha": 80,
@@ -49,67 +117,15 @@
         "globalMoveMethod": "direct",
         "drawShape": "arc",
         "shapeSize": "direct",
-        "shapeFill": {},
-        "shrink": true,
+        "shapeFill": {
+          "x": 0,
+          "y": 15,
+          "z": 127
+        },
+        "shrink": false,
         "shrinkRate": 0.3,
         "fade": false,
-        "fadeRate": 1
-      }
-    },
-    {
-      "numParticles": 5000,
-      "lifetime": 30,
-      "size": 3,
-      "color": {
-        "x": 74,
-        "y": 25,
-        "z": 66
-      },
-      "alpha": 100,
-      "options": {
-        "scl": 5,
-        "magnitude": 1,
-        "angleMult": 1,
-        "globalSpeedLimit": 1,
-        "noiseScale": 0.01,
-        "edgeWrap": false,
-        "spawnSpillover": 100,
-        "globalMoveMethod": "direct",
-        "drawShape": "arc",
-        "shapeSize": "direct",
-        "shapeFill": {},
-        "shrink": true,
-        "shrinkRate": 0.3,
-        "fade": false,
-        "fadeRate": 1
-      }
-    },
-    {
-      "numParticles": 5000,
-      "lifetime": 40,
-      "size": 2,
-      "color": {
-        "x": 93,
-        "y": 31,
-        "z": 83
-      },
-      "alpha": 80,
-      "options": {
-        "scl": 5,
-        "magnitude": 1,
-        "angleMult": 1,
-        "globalSpeedLimit": 1,
-        "noiseScale": 0.01,
-        "edgeWrap": false,
-        "spawnSpillover": 100,
-        "globalMoveMethod": "direct",
-        "drawShape": "arc",
-        "shapeSize": "direct",
-        "shapeFill": {},
-        "shrink": true,
-        "shrinkRate": 0.3,
-        "fade": false,
-        "fadeRate": 1
+        "fadeRate": 5
       }
     },
     {
@@ -117,9 +133,9 @@
       "lifetime": 30,
       "size": 2,
       "color": {
-        "x": 112,
-        "y": 38,
-        "z": 100
+        "x": 199,
+        "y": 5,
+        "z": 0
       },
       "alpha": 70,
       "options": {
@@ -133,11 +149,15 @@
         "globalMoveMethod": "direct",
         "drawShape": "arc",
         "shapeSize": "direct",
-        "shapeFill": {},
-        "shrink": true,
+        "shapeFill": {
+          "x": 0,
+          "y": 15,
+          "z": 127
+        },
+        "shrink": false,
         "shrinkRate": 0.3,
         "fade": false,
-        "fadeRate": 1
+        "fadeRate": 5
       }
     }
   ]

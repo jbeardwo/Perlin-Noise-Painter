@@ -1,0 +1,68 @@
+{
+  "particleSets": [
+    {
+      "numParticles": 7000,
+      "lifetime": 30,
+      "size": 7,
+      "color": {
+        "x": 141,
+        "y": 26,
+        "z": 17
+      },
+      "alpha": 100,
+      "options": {
+        "scl": 5,
+        "magnitude": 1,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 100,
+        "globalMoveMethod": "direct",
+        "drawShape": "arc",
+        "shapeSize": "direct",
+        "shapeFill": {
+          "x": 206,
+          "y": 62,
+          "z": 98
+        },
+        "shrink": true,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    },
+    {
+      "numParticles": 3000,
+      "lifetime": 40,
+      "size": 2,
+      "color": {
+        "x": 206,
+        "y": 62,
+        "z": 98
+      },
+      "alpha": 80,
+      "options": {
+        "scl": 5,
+        "magnitude": 1,
+        "angleMult": 1,
+        "globalSpeedLimit": 1,
+        "noiseScale": 0.01,
+        "edgeWrap": false,
+        "spawnSpillover": 100,
+        "globalMoveMethod": "direct",
+        "drawShape": "arc",
+        "shapeSize": "direct",
+        "shapeFill": {
+          "x": 229,
+          "y": 101,
+          "z": 140
+        },
+        "shrink": true,
+        "shrinkRate": 0.3,
+        "fade": false,
+        "fadeRate": 1
+      }
+    }
+  ]
+}
