@@ -8,10 +8,9 @@ body {
 }
 
 .container {
-    display: grid;
-    grid-template-columns: auto 750px auto;
+    display: flex;
+    justify-content: start;
     gap: 20px;
-    justify-content: center;
 }
 
 .controls-panel {
@@ -29,7 +28,9 @@ body {
 }
 
 .play-panel {
-    display: flex;
+    flex: 1; /* take remaining space in container */
+    min-width: 300px;
+    max-width: 350px;  display: flex;
     flex-direction: column;
     align-items: center;
     width: auto;
@@ -52,11 +53,10 @@ body {
 .canvas-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    height: fit-content;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
     padding: 10px;
+    align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -101,6 +101,8 @@ input:focus, select:focus {
     padding: 4px;
 }
 
+
+
 button {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -128,6 +130,7 @@ button:hover {
     font-weight: 500;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    flex 1 1 45%;
 }
 
 .button-like:hover {
@@ -248,10 +251,11 @@ button:hover {
 }
 
 .canvas-controls {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
 #fps-counter {
@@ -264,15 +268,16 @@ button:hover {
 /* Responsive design */
 @media (max-width: 1500px) {
     .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        display: flex;               /* switch to flex */
+        flex-direction: column;      /* stack vertically */
+        align-items: center;         /* center horizontally */
         gap: 15px;
     }
 
     .controls-panel,
     .play-panel {
-        width: auto;
+        width: auto;                 /* shrink to fit content */
+        max-width: 90%;              /* optional: prevent overflow */
     }
 }
 
@@ -280,7 +285,6 @@ button:hover {
 /* Collapsible Section Styles */
 
 .collapsible-section {
-    width: fit-content;
     max-width: 720px;
     margin-bottom: 15px;
     border: 1px solid rgba(255, 255, 255, 0.1);

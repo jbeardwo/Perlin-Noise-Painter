@@ -23,8 +23,6 @@ class ParticleSet {
     this.drawShape = options.drawShape || "line";
     this.shapeSize = options.shapeSize || "relative";
     this.shapeFill = options.shapeFill || createVector(255, 255, 255);
-
-    // Animation properties (moved from constructor parameters to options)
     this.shrink = options.shrink || false;
     this.shrinkRate = options.shrinkRate || .3;
     this.fade = options.fade || false;

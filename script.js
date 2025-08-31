@@ -14,7 +14,7 @@ let tooltip = null;
 // p5.js sketch
 function setup() {
 
-  let canvasSize = 720
+  let canvasSize = Math.min(0.9 * window.innerHeight, 0.9 * window.innerWidth);
   canvas = createCanvas(canvasSize, canvasSize);
   canvas.parent('p5-canvas');
   pixelDensity(1);
@@ -583,4 +583,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize Set List UI
   updateParticleSetsList();
 });
+
+function handleResize() {
+  if (!isRunning) {
+    setup();
+  }
+}
+
+
+window.addEventListener("resize", handleResize);
 

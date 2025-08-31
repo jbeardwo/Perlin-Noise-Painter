@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <title>Particle System UI</title>
     <script src="p5.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -222,15 +222,17 @@
         <div class="play-panel">
         <!-- Playback controls -->
         <div class="canvas-controls">
-              <button class="button-like" onclick="startAnimation()">Start</button>
-              <button class="button-like" onclick="saveCanvas('particleArt.png')">Save Image</button>
-              <button class="button-like" onclick="stopAnimation()">Stop</button>
-              <button class="button-like" onclick="clearCanvas()">Clear</button>
-              <button class="button-like" onclick="savePreset()">Save Preset</button>
-              <div class="file-input-wrapper">
-                  <input type="file" id="presetFileInput" accept=".json" onchange="loadPresetFromFile(event)">
-                  <label for="presetFileInput" class="button-like">Load Preset</label>
-              </div>
+
+                <button class="button-like" onclick="startAnimation()">Start</button>
+                <button class="button-like" onclick="stopAnimation()">Stop</button>
+                <button class="button-like" onclick="saveCanvas('particleArt.png')">Save Image</button>
+                <button class="button-like" onclick="clearCanvas()">Clear</button>
+              
+                <button class="button-like" onclick="savePreset()">Save Preset</button>
+                <div class="file-input-wrapper">
+                    <input type="file" id="presetFileInput" accept=".json" onchange="loadPresetFromFile(event)">
+                    <label for="presetFileInput" class="button-like">Load Preset</label>
+                </div>
         </div>
         <!-- Active Sets -->
         <div class="section">
