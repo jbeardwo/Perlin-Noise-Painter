@@ -266,7 +266,7 @@ button:hover {
 }
 
 /* Responsive design */
-@media (max-width: 1500px) {
+@media (max-width: 1400px) {
     .container {
         display: flex;               /* switch to flex */
         flex-direction: column;      /* stack vertically */

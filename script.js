@@ -584,12 +584,3 @@ document.addEventListener('DOMContentLoaded', function () {
   updateParticleSetsList();
 });
 
-function handleResize() {
-  if (!isRunning) {
-    setup();
-  }
-}
-
-
-window.addEventListener("resize", handleResize);
-
